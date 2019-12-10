@@ -100,14 +100,11 @@ func (bnWs *BinanceWs) subscribe(endpoint string, handle func(msg []byte) error)
 	go bnWs.exitHandler(wsConn)
 }
 
-func (bnWs *BinanceWs) SubscribeDepth(pair CurrencyPair, size int) error {
+func (bnWs *BinanceWs) SubscribeDepth(pair CurrencyPair) error {
 	if bnWs.depthCallback == nil {
 		return errors.New("please set depth callback func")
 	}
-	if size != 5 && size != 10 && size != 20 {
-		return errors.New("please set depth size as 5 / 10 / 20")
-	}
-	endpoint := fmt.Sprintf("%s/%s@depth%d", bnWs.baseURL, strings.ToLower(pair.ToSymbol("")), size)
+	endpoint := fmt.Sprintf("%s/%s@depth@100ms", bnWs.baseURL, strings.ToLower(pair.ToSymbol("")))
 
 	handle := func(msg []byte) error {
 		rawDepth := struct {
